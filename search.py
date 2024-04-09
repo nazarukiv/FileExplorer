@@ -1,14 +1,17 @@
 import os, shutil
 
-KEY_FOR_SEARCH = input('What do you want to find? \n')
-PATH_FOR_COPY = input("Write down the place where files should be copied?\n")
+KEY_FOR_SEARCH = input('What are we looking for?\n')
+PATH_FOR_COPY = input('Where should I copy the files?\n')
+
 
 def search():
-    #if you select disk C, it will search trough disk until it locates the desired file, assuming it exists
-    for adress, dirs, files in os.walk(input("Write down road of start \n")):
+    for adress, dirs, files in os.walk(input('Enter start path\n')):
+        if adress == PATH_FOR_COPY:
+            continue
         for file in files:
-            if file.endswith('.txt'):  # we can add any criteria to this with use of and.
+            if file.endswith('.txt'):
                 yield os.path.join(adress, file)
+
 
 def read_from_pathtxt(path):
     with open(path) as r:
@@ -16,15 +19,26 @@ def read_from_pathtxt(path):
             if KEY_FOR_SEARCH in i:
                 return copy(path)
 
+
 def copy(path):
     file_name = path.split('\\')[-1]
+    count = 1
+    while True:
+        if os.path.isfile(os.path.join(PATH_FOR_COPY, file_name)):
+            if f'({count - 1})' in file_name:
+                file_name = file_name.replace(f'({count - 1})', '')
+            file_name = f'({count}).'.join(file_name.split('.'))
+            count += 1
+        else:
+            break
 
     shutil.copyfile(path, os.path.join(PATH_FOR_COPY, file_name))
-    print('File was copied!', file_name)
+    print('', file_name)
+
 
 for i in search():
     try:
         read_from_pathtxt(i)
     except Exception as e:
-        with open(os.path.join(PATH_FOR_COPY,'error.txt'), 'a') as r:
+        with open(os.path.join(PATH_FOR_COPY, 'errors.txt'), 'a') as r:
             r.write(str(e) + '\n' + i + '\n')
