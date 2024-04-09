@@ -28,4 +28,4 @@ This Python program allows users to search for files containing a specific keywo
 Suppose you want to search for files containing the keyword "important" within the directory `/Users/user/Documents`. You want to copy these files to `/Users/user/Backup`.
 
 ```shell
-python search_copy_files.py
+python search.py
